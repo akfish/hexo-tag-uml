@@ -29,6 +29,12 @@ hexo.extend.console.register "uml", packageInfo.description, umlOptions, (args, 
 
 # Block Tag
 hexo.extend.tag.register "uml", ((args, content) ->
-        result = "<script type='text/jumly+sequence'>#{content}</script>"
+        diagramType = args[0]
+        if diagramType == ''
+                diagramType = "sequence"
+        console.log diagramType
+        if diagramType != "sequence" and diagramType != "robustness"
+                return "<p>[hexo-tag-uml error: invalid diagram type: '#{diagramType}']</p>"
+        result = "<script type='text/jumly+#{diagramType}'>#{content}</script>"
         return result
         ), true

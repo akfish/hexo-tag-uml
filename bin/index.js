@@ -40,7 +40,15 @@ hexo.extend.console.register("uml", packageInfo.description, umlOptions, functio
 });
 
 hexo.extend.tag.register("uml", (function(args, content) {
-  var result;
-  result = "<script type='text/jumly+sequence'>" + content + "</script>";
+  var diagramType, result;
+  diagramType = args[0];
+  if (diagramType === '') {
+    diagramType = "sequence";
+  }
+  console.log(diagramType);
+  if (diagramType !== "sequence" && diagramType !== "robustness") {
+    return "<p>[hexo-tag-uml error: invalid diagram type: '" + diagramType + "']</p>";
+  }
+  result = "<script type='text/jumly+" + diagramType + "'>" + content + "</script>";
   return result;
 }), true);
