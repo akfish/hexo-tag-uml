@@ -12,10 +12,18 @@ file = hexo.file
 themeDir = hexo.theme_dir
 layoutDir = themeDir + "layout\\"
 assetDir = __dirname + "\\..\\asset\\"
-mathJaxLayoutName = "math-jax.ejs"
-mathJaxLayoutAsset = assetDir + mathJaxLayoutName
-mathJaxLayoutFile = layoutDir + "_partial\\" + mathJaxLayoutName
+jumlyLayoutName = "jumly.ejs"
+jumlyLayoutAsset = assetDir + jumlyLayoutName
+jumlyLayoutFile = layoutDir + "_partial\\" + jumlyLayoutName
 
+resFiles = [
+        "jumly\\coffee-script.js",
+        "jumly\\jumly.css",
+        "jumly\\jumly.min.js"
+        ]
+
+sourceDir = themeDir + "source\\"
+jumlyDir = sourceDir + "jumly\\"
 pad = (val, length, padChar = '.') ->
         val += ''
         numPads = length - val.length
@@ -29,114 +37,45 @@ doneOrFail = (b) ->
         answer = if b then "DONE".green else "FAIL".red
         "#{"[".bold}#{answer}#{"]".bold}"
 
-load = (files, callback) ->
-        # Parallelly load scripts
-        tasks = []
-
-        makeTask = (path) ->
-                return (cb) ->
-                        layout = new Layout path
-                        layout.load cb
-
-        files.forEach (f) ->
-
-                fullPath = layoutDir + f
-                tasks.push makeTask fullPath
-
-        async.parallel tasks, (err, results) ->
-                if err?
-                        next? err
-                log.info "Load #{results.length} layout files"
-                heads = results.filter (l) -> l.hasHead
-                log.info "Found #{heads.length} with <head>"
-                callback? null, heads
-
-        
-list = (next) ->
-        log.info "Layout folder: #{layoutDir}"
-        file.list layoutDir, null, (err, files) ->
-                if err?
-                        next? err
-                files = files.filter (f) -> f.match ".*?\.ejs$"
-                log.info "Found #{files.length} layout files"
-                next? null, files
-
-check = (layouts, next) ->
-        deployed = fs.existsSync mathJaxLayoutFile
-
-        log.info pad("Layout math-jax.ejs deployed ", 50) + " #{yesOrNo(deployed)}"
-        load layouts, (err, headLayouts) ->
-                if err?
-                        next? err
-                        return
-                injected = true
-                for layout, i in headLayouts
-                        log.info pad("Injected #{i + 1} of #{headLayouts.length} ", 50) +  " #{yesOrNo(layout.injected)}"
-                        if not layout.injected then injected = false
-                next? null,
-                        deployed: deployed
-                        layouts: headLayouts
-                        injected: injected
-
-inject = (payload, next) ->
-        if payload.deployed and payload.injected
-                log.info "Already installed."
-                next? null, payload
-                return
-        if not payload.deployed
+checkAndLink = (f, src) ->
+        deployed = fs.existsSync f
+        log.info pad("#{f} deployed ", 50) + " #{yesOrNo(deployed)}"
+        if not deployed
                 try
-                        fs.linkSync mathJaxLayoutAsset, mathJaxLayoutFile
-                        log.info pad("Deploy math-jax.ejs ", 50) +  " #{doneOrFail(true)}"
+                        fs.linkSync src, f
+                        log.info pad("Deploy #{f} ", 50) +  " #{doneOrFail(true)}"
                 catch error
-                        log.error pad("Deploy math-jax.ejs ", 50) +  " #{doneOrFail(false)}"
+                        log.error pad("Deploy #{f} ", 50) +  " #{doneOrFail(false)}"
                         log.error error
 
-        tasks = []
-        for layout in payload.layouts
-                if not layout.injected
-                        tasks.push (callback) ->
-                                layout.inject()
-                                layout.update(callback)
-
-        async.parallel tasks, (err, results) ->
-                if err?
-                        log.error pad("Inject #{err.length} layouts", 50) +  " #{doneOrFail(false)}"
-                        for e in err
-                                log.error e
-                        next? err
-                log.info pad("Inject #{results.length} layouts", 50) +  " #{doneOrFail(true)}"
-                next? null, null
-
-
-
-remove = (payload, next) ->
-        if not payload.deployed and not payload.injected
-                log.info "Not installed."
-                next? null, payload
-                return
-        if payload.deployed
+checkAndUnlink = (f) ->
+        deployed = fs.existsSync f
+        log.info pad("#{f} deployed ", 50) + " #{yesOrNo(deployed)}"
+        if deployed
                 try
-                        fs.unlinkSync mathJaxLayoutFile
-                        log.info pad("Undeploy math-jax.ejs ", 50) +  " #{doneOrFail(true)}"
+                        fs.unlinkSync f
+                        log.info pad("Undeploy #{f} ", 50) +  " #{doneOrFail(true)}"
                 catch error
-                        log.error pad("Undeploy math-jax.ejs ", 50) +  " #{doneOrFail(false)}"
+                        log.error pad("Undeploy #{f} ", 50) +  " #{doneOrFail(false)}"
                         log.error error
-                        
-        tasks = []
-        for layout in payload.layouts
-                if layout.injected
-                        tasks.push (callback) ->
-                                layout.uninject()
-                                layout.update(callback)
+                
 
-        async.parallel tasks, (err, results) ->
-                if err?
-                        log.error pad("Uninject #{err.length} layouts", 50) +  " #{doneOrFail(false)}"
-                        for e in err
-                                log.error e
-                        next? err
-                log.info pad("Uninject #{results.length} layouts", 50) +  " #{doneOrFail(true)}"
-                next? null, null
+check = (next) ->
+        checkAndLink jumlyLayoutFile, jumlyLayoutAsset
+        if not fs.existsSync jumlyDir
+                fs.mkdirSync jumlyDir
+        for f in resFiles
+                src = assetDir + f
+                dst = sourceDir + f
+                checkAndLink dst, src
+
+uncheck = (next) ->
+        checkAndUnlink jumlyLayoutFile
+        for f in resFiles
+                dst = sourceDir + f
+                checkAndUnlink dst
+        if fs.existsSync jumlyDir
+                fs.rmdirSync jumlyDir
 
         
 module.exports = class Command
@@ -154,9 +93,7 @@ module.exports = class Command
         
         install: () ->
                 async.waterfall [
-                        list,
                         check,
-                        inject
                         ], (err, result) ->
                                 if err?
                                         log.error err
@@ -165,9 +102,7 @@ module.exports = class Command
                 
         uninstall: () ->
                 async.waterfall [
-                        list,
-                        check,
-                        remove
+                        uncheck,
                         ], (err, result) ->
                                 if err?
                                         log.error err
