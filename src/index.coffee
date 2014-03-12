@@ -14,7 +14,7 @@ packageInfo = require '../package.json'
 Command = require './Command'
 
 # Options
-mathOptions = 
+umlOptions = 
         desc: packageInfo.description
         usage: '<argument>'
         arguments: [
@@ -23,7 +23,7 @@ mathOptions =
         ]
 
 # The console
-hexo.extend.console.register "uml", packageInfo.description, mathOptions, (args, callback) ->
+hexo.extend.console.register "uml", packageInfo.description, umlOptions, (args, callback) ->
         cmd = new Command callback
         cmd.execute args._[0]
 
