@@ -45,7 +45,6 @@ hexo.extend.tag.register("uml", (function(args, content) {
   if (diagramType === '') {
     diagramType = "sequence";
   }
-  console.log(diagramType);
   if (diagramType !== "sequence" && diagramType !== "robustness") {
     return "<p>[hexo-tag-uml error: invalid diagram type: '" + diagramType + "']</p>";
   }
