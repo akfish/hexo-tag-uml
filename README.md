@@ -1,9 +1,12 @@
 hexo-tag-uml
 ===================
 
-Render UML sequence diagram in your blog.
+Render UML sequence diagram in your blog powered by [Jumly](http://jumly.tmtk.net/).
 
-(See a Chinese version of this document [here](http://blog.catx.me/2014/03/09/hexo-mathjax-plugin/))
+## Feature
+
+* Sequence diagram
+
 ## Install
 
 > npm install hexo-tag-uml --save
@@ -40,4 +43,14 @@ plugins:
 
 ## Usage
 
-(TBD)
+```markdown
+{% uml %}
+@found "You", ->
+  @message "Think", ->
+    @message "Write your idea", "JUMLY", ->
+      @create "Diagram"
+jumly.css "background-color":"#8CC84B"
+{% enduml %}
+```
+
+For more information on how to write jumly syntax, visit [Jumly](http://jumly.tmtk.net/).
