@@ -5,6 +5,8 @@ Render UML sequence diagram in your blog powered by [Jumly](http://jumly.tmtk.ne
 
 ![snapshot](https://raw.github.com/akfish/hexo-tag-uml/master/snapshot.png)
 
+A Chinese version of document can be found [here](http://blog.catx.me/2014/03/12/hexo-uml-tag-plugin/).
+
 ## Feature
 
 * Sequence diagram
