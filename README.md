@@ -3,19 +3,25 @@ hexo-tag-uml
 
 Render UML sequence diagram in your blog powered by [Jumly](http://jumly.tmtk.net/).
 
+![snapshot](https://raw.github.com/akfish/hexo-tag-uml/master/snapshot.png)
+
 ## Feature
 
 * Sequence diagram
 
 ## Install
 
-> npm install hexo-tag-uml --save
+```shell
+npm install hexo-tag-uml --save
+```
 
 ## Initialize
 
 * Run in your blog project folder:
 
-> $ hexo uml install
+```shell
+hexo uml install
+```
 
 This command will copy necessary scripts and style sheets to proper location.
 
@@ -29,10 +35,11 @@ Add the following line into a proper location of `.ejs` file:
 
 A proper place is usually in the `<head>` section. But always make sure that there are no other reference to `jQuery` otherwise it will cause conflicts.
 
-**Special note for hexo's landscape theme:**
+>**Special note for hexo's landscape theme:**
 
-You should add the above line in `_partial\after-footer.ejs`.
-And remove the original jQuery reference.
+>You should add the above line in `_partial\after-footer.ejs`.
+
+>And remove the original jQuery reference.
 
 * Edit `_config.yml`:
 
