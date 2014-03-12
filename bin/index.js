@@ -25,29 +25,22 @@ mathOptions = {
   "arguments": [
     {
       name: 'install',
-      desc: 'Install MathJax dependencies.'
+      desc: 'Install assets.'
     }, {
       name: 'uninstall',
-      desc: 'Uninstall MathJax dependencies.'
+      desc: 'Uninstall assets.'
     }
   ]
 };
 
-hexo.extend.console.register("math", packageInfo.description, mathOptions, function(args, callback) {
+hexo.extend.console.register("uml", packageInfo.description, mathOptions, function(args, callback) {
   var cmd;
   cmd = new Command(callback);
   return cmd.execute(args._[0]);
 });
 
-hexo.extend.tag.register("math", function(args, content) {
-  var eq, result;
-  eq = args.join(" ");
-  result = "<span>$" + (eval('"' + eq + '"')) + "$</span>";
-  return result;
-});
-
-hexo.extend.tag.register("math-block", (function(args, content) {
+hexo.extend.tag.register("uml", (function(args, content) {
   var result;
-  result = "<span>$$" + content + "$$</span>";
+  result = "<script type='text/jumly+sequence'>" + content + "</script>";
   return result;
 }), true);
