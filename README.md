@@ -10,6 +10,7 @@ A Chinese version of document can be found [here](http://blog.catx.me/2014/03/12
 ## Feature
 
 * Sequence diagram
+* Robustness diagram
 
 ## Install
 
@@ -51,6 +52,20 @@ plugins:
 ```
 
 ## Usage
+
+Syntax:
+
+```markdown
+{% uml [diagram_type] %}
+{% enduml %}
+```
+
+Valid `diagram_type` values are:
+
+* sequence
+* robustness
+
+If user does not specify one, `sequence` will be used as default. 
 
 ```markdown
 {% uml %}
