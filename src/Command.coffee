@@ -1,7 +1,6 @@
 # Imports
 colors = require 'colors'
 Log = require './Log'
-Layout = require './Layout'
 async = require 'async'
 fs = require 'fs'
 
