@@ -3,26 +3,26 @@ colors = require 'colors'
 Log = require './Log'
 async = require 'async'
 fs = require 'fs'
-
+path = require 'path'
 log = new Log()
 
 # Hexo
 file = hexo.file
 themeDir = hexo.theme_dir
-layoutDir = themeDir + "layout\\"
-assetDir = __dirname + "\\..\\asset\\"
+layoutDir = path.resolve themeDir, "layout"
+assetDir = path.resolve __dirname, "../asset"
 jumlyLayoutName = "jumly.ejs"
-jumlyLayoutAsset = assetDir + jumlyLayoutName
-jumlyLayoutFile = layoutDir + "_partial\\" + jumlyLayoutName
+jumlyLayoutAsset = path.resolve assetDir, jumlyLayoutName
+jumlyLayoutFile = path.resolve layoutDir, "_partial", jumlyLayoutName
 
 resFiles = [
-        "jumly\\coffee-script.js",
-        "jumly\\jumly.css",
-        "jumly\\jumly.min.js"
+        path.join("jumly", "coffee-script.js"),
+        path.join("jumly", "jumly.css"),
+        path.join("jumly", "jumly.min.js")
         ]
-
-sourceDir = themeDir + "source\\"
-jumlyDir = sourceDir + "jumly\\"
+console.log __dirname
+sourceDir = path.resolve themeDir, "source"
+jumlyDir = path.resolve sourceDir, "jumly"
 pad = (val, length, padChar = '.') ->
         val += ''
         numPads = length - val.length
@@ -64,14 +64,14 @@ check = (next) ->
         if not fs.existsSync jumlyDir
                 fs.mkdirSync jumlyDir
         for f in resFiles
-                src = assetDir + f
-                dst = sourceDir + f
+                src = path.resolve assetDir, f
+                dst = path.resolve sourceDir, f
                 checkAndLink dst, src
 
 uncheck = (next) ->
         checkAndUnlink jumlyLayoutFile
         for f in resFiles
-                dst = sourceDir + f
+                dst = path.resolve sourceDir, f
                 checkAndUnlink dst
         if fs.existsSync jumlyDir
                 fs.rmdirSync jumlyDir

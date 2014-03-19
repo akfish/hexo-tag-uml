@@ -1,6 +1,6 @@
 {
   "name": "hexo-tag-uml",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Render UML sequence diagram in your blog",
   "main": "./bin/index",
   "repository": {
