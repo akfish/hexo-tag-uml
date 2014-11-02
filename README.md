@@ -1,6 +1,12 @@
 hexo-tag-uml
 ===================
 
+> **Deprecated**:
+
+> This project is deprecated.
+
+> Please use [Hexo Diagram](https://github.com/akfish/hexo-diagram) instead.
+
 Render UML sequence diagram in your blog powered by [Jumly](http://jumly.tmtk.net/).
 
 ![snapshot](https://raw.github.com/akfish/hexo-tag-uml/master/snapshot.png)
